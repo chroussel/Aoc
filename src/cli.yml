@@ -1,0 +1,23 @@
+name: advent
+version: "1.0"
+about: Utilities for advent of code
+subcommands:
+  - input:
+      args:
+        - YEAR:
+            required: true
+            index: 1
+        - DAY:
+            required: true
+            index: 2
+  - run:
+      args:
+        - YEAR:
+            required: true
+            index: 1
+        - DAY:
+            required: true
+            index: 2
+        - PART:
+            required: false
+            index: 3
