@@ -1,9 +1,30 @@
 mod r2018_1;
+mod r2019_1;
 
 use failure::Error;
 use std::collections;
 use std::collections::HashMap;
 use std::env::VarError::NotPresent;
+
+pub trait Solver {
+    type Input: std::fmt::Debug;
+    type Output: std::fmt::Display;
+
+    fn parse_input(_: &str) -> Result<Self::Input, Error>;
+    fn solve_part1(_: Self::Input) -> Result<Self::Output, Error>;
+    fn solve_part2(_: Self::Input) -> Result<Self::Output, Error>;
+
+    fn solve(input: &str, part1: bool) -> Result<String, Error>{
+        let i = Self::parse_input(input)?;
+        let res = if (part1) {
+            Self::solve_part1(i)?
+        } else {
+            Self::solve_part2(i)?
+        };
+
+        Ok(res.to_string())
+    }
+}
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct InputDay {
@@ -22,22 +43,10 @@ impl InputDay {
     }
 }
 
-type RunFn = fn(&str) -> Result<String, Error>;
-
-lazy_static! {
-    static ref RUN_MAP: HashMap<InputDay, RunFn> = init_run_map();
-}
-
-fn init_run_map() -> HashMap<InputDay, fn(&str) ->Result<String, Error>>{
-    let mut hash_map = collections::HashMap::new();
-    hash_map.insert(InputDay::new("2018", "1", "1"), r2018_1::run1 as RunFn);
-    hash_map.insert(InputDay::new("2018", "1", "2"), r2018_1::run2 as RunFn);
-    hash_map
-}
-
-pub fn run(year: &str, day: &str, part: &str, input: &str) -> Result<String, Error> {
-    match RUN_MAP.get(&InputDay::new(year, day, part)) {
-        Some(f)=> f(input),
-        None => Err(Error::from(NotPresent))
+pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Error> {
+    match (year, day) {
+        ("2018", "1") => r2018_1::Solution::solve(input, part1),
+        ("2019", "1") => r2019_1::Solution::solve(input, part1),
+        _ => Err(Error::from(NotPresent))
     }
 }

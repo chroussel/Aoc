@@ -44,7 +44,7 @@ async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Error> {
         download_input(year, day).await?;
     }
     let input = std::fs::read_to_string(input_path)?;
-    let res = solutions::run(year, day, part, &input)?;
+    let res = solutions::run(year, day, part == "1", &input)?;
     println!("Result is {}", res);
     Ok(())
 }

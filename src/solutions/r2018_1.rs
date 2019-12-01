@@ -1,31 +1,34 @@
 use failure::Error;
+use crate::solutions::Solver;
 
-pub fn run1(input: &str) ->Result<String, Error> {
-    let res: i32 = input.split('\n')
-        .filter(|l| !l.is_empty())
-        .map(|l|l.parse::<i32>().map_err(From::from))
-        .collect::<Result<Vec<i32>, Error>>()?
-        .iter()
-        .sum();
-    Ok(res.to_string())
-}
+pub enum Solution {}
 
-pub fn run2(input: &str) ->Result<String, Error> {
-    let res: Vec<i32> = input.split('\n')
-        .filter(|l| !l.is_empty())
-        .map(|l|l.parse::<i32>().map_err(From::from))
-        .collect::<Result<Vec<i32>, Error>>()?;
-    let mut hashSet = std::collections::HashSet::new();
-    let mut running = 0;
-    loop {
-        for vi in &res {
+impl Solver for Solution {
+    type Input = Vec<i32>;
+    type Output = i32;
+
+    fn parse_input(input: &str) -> Result<Self::Input, Error> {
+        input.lines()
+            .map(|l|l.parse().map_err(From::from))
+            .collect()
+    }
+
+    fn solve_part1(input: Self::Input) -> Result<Self::Output, Error> {
+        Ok(input.iter().sum())
+    }
+
+    fn solve_part2(input: Self::Input) -> Result<Self::Output, Error> {
+        let mut hash_set = std::collections::HashSet::new();
+        let mut running = 0;
+
+        for vi in input.iter().cycle() {
             running += vi;
-            if hashSet.contains(&running) {
-                return Ok(running.to_string())
+            if hash_set.contains(&running) {
+                return Ok(running)
             } else {
-                hashSet.insert(running);
+                hash_set.insert(running);
             }
         }
+        unreachable!()
     }
-    Ok(String::from("Nothing"))
 }
