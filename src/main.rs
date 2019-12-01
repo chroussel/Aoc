@@ -1,17 +1,17 @@
-#[macro_use]
-extern crate clap;
+#[macro_use] extern crate clap;
 extern crate dirs;
 extern crate reqwest;
-#[macro_use]
-extern crate tokio;
-#[macro_use]
-extern crate lazy_static;
+#[macro_use] extern crate tokio;
+#[macro_use] extern crate lazy_static;
+#[macro_use] extern crate criterion;
+
 
 mod solutions;
 
 use clap::App;
 use failure::Error;
 use std::path::PathBuf;
+use criterion::Criterion;
 
 fn get_session() -> Result<String, Error> {
     let home = dirs::home_dir().unwrap();
@@ -49,6 +49,21 @@ async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Error> {
     Ok(())
 }
 
+async fn bench(year: &str, day: &str, part: &str) -> Result<(), Error> {
+    let input_path =get_input_location(year, day);
+    if !input_path.exists() {
+        download_input(year, day).await?;
+    }
+    let input = std::fs::read_to_string(input_path)?;
+    let fn_name = format!("year {} day {} part {}", year, day, part);
+    Criterion::default()
+        .bench_function(&fn_name,|b| {
+            b.iter(|| criterion::black_box(solutions::run(year, day, part == "1", &input).expect("working")))
+        })
+        .final_summary();
+    Ok(())
+}
+
 fn main() {
     let yaml = load_yaml!("cli.yml");
     let matches = App::from(yaml).get_matches();
@@ -64,4 +79,11 @@ fn main() {
         let part = args.value_of("PART").unwrap_or("1");
         rt.block_on(run_input(year, day, part)).unwrap();
     }
+    if let Some(args) = matches.subcommand_matches("bench") {
+        let year = args.value_of("YEAR").expect("required");
+        let day = args.value_of("DAY").expect("required");
+        let part = args.value_of("PART").unwrap_or("1");
+        rt.block_on(bench(year, day, part)).unwrap();
+    }
+
 }

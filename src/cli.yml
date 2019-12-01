@@ -21,3 +21,14 @@ subcommands:
         - PART:
             required: false
             index: 3
+  - bench:
+      args:
+        - YEAR:
+            required: true
+            index: 1
+        - DAY:
+            required: true
+            index: 2
+        - PART:
+            required: false
+            index: 3
