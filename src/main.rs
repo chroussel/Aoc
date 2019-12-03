@@ -1,7 +1,7 @@
 #[macro_use] extern crate clap;
 extern crate dirs;
 extern crate reqwest;
-#[macro_use] extern crate tokio;
+extern crate tokio;
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate criterion;
 
