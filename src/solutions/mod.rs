@@ -5,6 +5,8 @@ mod r2019_3;
 mod r2019_4;
 mod r2019_5;
 mod r2019_6;
+mod r2019_7;
+mod r2019_8;
 mod template;
 
 use failure::Error;
@@ -13,7 +15,7 @@ use std::collections::HashMap;
 use std::env::VarError::NotPresent;
 
 pub trait Solver {
-    type Input: std::fmt::Debug;
+    type Input;
     type Output: std::fmt::Display;
 
     fn parse_input(_: &str) -> Result<Self::Input, Error>;
@@ -58,6 +60,8 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "4") => r2019_4::Solution::solve(input, part1),
         ("2019", "5") => r2019_5::Solution::solve(input, part1),
         ("2019", "6") => r2019_6::Solution::solve(input, part1),
+        ("2019", "7") => r2019_7::Solution::solve(input, part1),
+        ("2019", "8") => r2019_8::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }

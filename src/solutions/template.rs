@@ -8,8 +8,8 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    type Input = Vec<i64>;
-    type Output = i64;
+    type Input = Vec<i32>;
+    type Output = i32;
 
     fn parse_input(input: &str) -> Result<Self::Input, Error> {
         unimplemented!()
