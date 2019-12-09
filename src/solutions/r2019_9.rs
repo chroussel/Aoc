@@ -11,30 +11,50 @@ enum State {
     Finished
 }
 
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+enum ParamMode {
+    Position = 0,
+    Immediate = 1,
+    Relative = 2
+}
+
+impl From<i64> for ParamMode {
+    fn from(value: i64) -> Self {
+        match value {
+            0 => ParamMode::Position,
+            1 => ParamMode::Immediate,
+            2 => ParamMode::Relative,
+            _ => unimplemented!()
+        }
+    }
+}
+
 struct Program {
-    code: Vec<i32>,
+    code: Vec<i64>,
     pc: usize,
     state: State,
-    input: Option<i32>,
-    output: Option<i32>
+    relative_base: i64,
+    input: Option<i64>,
+    output: Option<i64>
 }
 
 impl Program {
-    fn new(code: Vec<i32>) -> Self {
+    fn new(code: Vec<i64>) -> Self {
         Program {
             code,
             pc: 0,
+            relative_base: 0,
             state:State::Start,
             input:None,
             output:None
         }
     }
 
-    fn set_input(&mut self, input: i32) {
+    fn set_input(&mut self, input: i64) {
         self.input = Some(input);
     }
 
-    fn consume_output(&mut self) -> i32 {
+    fn consume_output(&mut self) -> i64 {
         self.pc+=2;
         self.output.take().unwrap()
     }
@@ -68,43 +88,69 @@ impl Program {
         }
     }
 
-    fn get_value(&self, value: i32, param: bool) -> i32 {
-        if param {
-            value
-        } else {
-            self.code[value as usize]
+    fn get_value(&self, value: i64, param: ParamMode) -> i64 {
+        match param {
+            ParamMode::Position => {
+                self.code.get(value as usize).map(|&a|a).unwrap_or(0)
+            },
+            ParamMode::Immediate => {
+                value
+            },
+            ParamMode::Relative => {
+                self.code.get((self.relative_base + value) as usize)
+                    .map(|&a|a)
+                    .unwrap_or(0)
+            },
         }
     }
+
+    fn set_value(&mut self, destination: i64, value: i64, param: ParamMode) {
+        let address = match param {
+            ParamMode::Position => {
+                destination
+            },
+            ParamMode::Immediate => {
+                unimplemented!()
+            },
+            ParamMode::Relative => {
+                (self.relative_base + destination)
+            },
+        } as usize;
+        if address >= self.code.len() {
+            self.code.resize(address + 1, 0);
+        }
+        self.code[address as usize] = value;
+    }
+
 
     fn step(&mut self) -> State {
         self.state = State::Running;
         let op_code = self.code[self.pc];
-        let param1 = op_code % 1000 / 100 == 1;
-        let param2 = op_code % 10000 / 1000 == 1;
-        let param3 =  op_code % 100000 / 10000 == 1;
+        let param1 = From::from(op_code % 1000 / 100);
+        let param2 = From::from(op_code % 10000 / 1000);
+        let param3: ParamMode =  From::from(op_code % 100000 / 10000);
         //dbg!(op_code);
+        //dbg!(param1, param2);
         match op_code % 100 {
             1 => {
                 let v1 = self.get_value(self.code[self.pc+1], param1);
                 let v2 = self.get_value(self.code[self.pc+2], param2);
-                let oi= self.code[self.pc+3] as usize;
+                self.set_value(self.code[self.pc+3], v1 + v2, param3);
                 self.pc+=4;
-                self.code[oi as usize] = v1 + v2;
             },
             2 => {
                 let v1 = self.get_value(self.code[self.pc+1], param1);
                 let v2 = self.get_value( self.code[self.pc+2], param2);
-                let oi= self.code[self.pc+3] as usize;
+                self.set_value(self.code[self.pc+3], v1 * v2, param3);
                 self.pc+=4;
-                self.code[oi as usize] = v1 * v2;
             },
             3 => {
                 if self.input.is_none() {
                     self.state = State::Input;
                     return State::Input;
                 } else {
-                    let address = self.code[self.pc+1] as usize;
-                    self.code[address] = self.input.take().unwrap();
+                    let value = self.input.take().unwrap();
+                    self.set_value(self.code[self.pc+1], value, param1);
                     self.pc+=2;
                     self.state = State::Running;
                 }
@@ -137,24 +183,29 @@ impl Program {
             7 => {
                 let v1 = self.get_value( self.code[self.pc+1], param1);
                 let v2 = self.get_value( self.code[self.pc+2], param2);
-                let v3 = self.code[self.pc+3] as usize;
-                self.pc+=4;
-                if v1 < v2 {
-                    self.code[v3] = 1;
+                let value = if v1 < v2 {
+                    1
                 } else {
-                    self.code[v3] = 0;
-                }
+                   0
+                };
+                self.set_value(self.code[self.pc+3], value, param3);
+                self.pc+=4;
             }
             8 => {
                 let v1 = self.get_value( self.code[self.pc+1], param1);
                 let v2 = self.get_value( self.code[self.pc+2], param2);
-                let v3 = self.code[self.pc+3] as usize;
-                self.pc+=4;
-                if v1 == v2 {
-                    self.code[v3] = 1;
+                let value = if v1 == v2 {
+                    1
                 } else {
-                    self.code[v3] = 0;
-                }
+                    0
+                };
+                self.set_value(self.code[self.pc+3], value, param3);
+                self.pc+=4;
+            }
+            9 => {
+                let v1 = self.get_value( self.code[self.pc+1], param1);
+                self.relative_base += v1;
+                self.pc+=2;
             }
             99 => {
                 self.state = State::Finished;
@@ -170,7 +221,7 @@ pub enum Solution {}
 
 
 impl Solution {
-    pub(crate) fn run(code: &[i32], mut input: Vec<i32>) -> Vec<i32>{
+    pub fn run(code: &[i64], mut input: Vec<i64>) -> Vec<i64>{
         let mut code = code.to_vec();
         let mut p = Program::new(code);
         let mut output = vec![];
@@ -190,70 +241,11 @@ impl Solution {
         }
         output
     }
-
-    fn run_seq(code: &[i32], mut seq: Vec<i32>) -> i32{
-        let mut res = 0;
-        while let Some(s) = seq.pop() {
-            let o = Solution::run(code, vec![res, s]);
-            res = o[0];
-        }
-        res
-    }
-
-    fn run_seqv2(code: &[i32], mut seq: Vec<i32>) -> i32{
-        let mut ps:Vec<Program> = seq.into_iter()
-            .map(|s| {
-                let mut p = Program::new(code.to_vec());
-                p.set_input(s);
-                p
-            })
-            .collect();
-
-        let mut cp = 0;
-        let mut signal = 0;
-        loop {
-            let curp = &mut ps[cp];
-            curp.run();
-            if curp.state == State::Input {
-                curp.set_input(signal);
-            }
-            match curp.run() {
-                State::Output => {
-                    signal = curp.consume_output();
-                },
-                State::Finished => {
-                    return signal;
-                },
-                _ => {}
-            }
-            cp = (cp + 1)%ps.len();
-        }
-        unreachable!()
-    }
-
-
-    fn all_permutation(v: Vec<i32>) -> Vec<Vec<i32>> {
-        Solution::all_permutation_inner(v.clone(), 0..v.len())
-    }
-
-    fn all_permutation_inner(mut v: Vec<i32>, range: Range<usize>) -> Vec<Vec<i32>> {
-        if range.len() <= 0 {
-            return vec![v];
-        }
-        let mut res = vec![];
-        for i in range.clone() {
-            v.swap(range.start, i);
-            let mut inner_res = Solution::all_permutation_inner(v.clone(), range.start+1..range.end);
-            res.append(&mut inner_res);
-            v.swap(range.start, i);
-        }
-        res
-    }
 }
 
 impl Solver for Solution {
-    type Input = Vec<i32>;
-    type Output = i32;
+    type Input = Vec<i64>;
+    type Output = i64;
 
     fn parse_input(input: &str) -> Result<Self::Input, Error> {
         input.trim_end()
@@ -263,49 +255,47 @@ impl Solver for Solution {
             .collect()
     }
 
-    fn solve_part1(input: Self::Input) -> Result<Self::Output, Error> {
-        let mut seq = vec!(1,0,4,3,2);
-        let res = Solution::all_permutation(seq)
-            .into_iter()
-            .map(|v| Solution::run_seq(&input, v))
-            .max();
-        Ok(res.unwrap())
+    fn solve_part1(mut input: Self::Input) -> Result<Self::Output, Error> {
+        let res = Solution::run(&input, vec!(1));
+        dbg!(&res);
+        Ok(*res.last().unwrap())
     }
 
     fn solve_part2(input: Self::Input) -> Result<Self::Output, Error> {
-        let mut seq = vec!(5,6,7,8,9);
-        let res = Solution::all_permutation(seq)
-            .into_iter()
-            .map(|v| Solution::run_seqv2(&input, v))
-            .max();
-        Ok(res.unwrap())
+        let res = Solution::run(&input, vec!(2));
+        dbg!(&res);
+        Ok(*res.last().unwrap())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::r2019_7::Solution;
+    use crate::solutions::r2019_9::Solution;
     use crate::solutions::Solver;
 
     #[test]
     fn e1() {
-        let code = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0";
-        //let res = 10 * b + a;
-        let res = Solution::solve(code, true);
+        let input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
+        let mut code = Solution::parse_input(input).unwrap();
+        let res = Solution::run(&code, vec!());
         dbg!(res);
     }
 
     #[test]
     fn e2() {
-        let code = "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0";
-        let res = Solution::solve(code, true);
+        let input = "104,1125899906842624,99";
+        let mut code = Solution::parse_input(input).unwrap();
+        code.resize(200, 0);
+        let res = Solution::run(&code, vec!());
         dbg!(res);
     }
 
     #[test]
     fn e3() {
-        let code = "3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0";
-        let res = Solution::solve(code, true);
+        let input = "1102,34915192,34915192,7,4,7,99,0";
+        let mut code = Solution::parse_input(input).unwrap();
+        code.resize(200, 0);
+        let res = Solution::run(&code, vec!());
         dbg!(res);
     }
 }
