@@ -8,6 +8,7 @@ mod r2019_6;
 mod r2019_7;
 mod r2019_8;
 mod r2019_9;
+mod r2019_10;
 mod template;
 
 use failure::Error;
@@ -64,6 +65,7 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "7") => r2019_7::Solution::solve(input, part1),
         ("2019", "8") => r2019_8::Solution::solve(input, part1),
         ("2019", "9") => r2019_9::Solution::solve(input, part1),
+        ("2019", "10") => r2019_10::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }

@@ -5,6 +5,7 @@ extern crate tokio;
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate criterion;
 extern crate itertools;
+extern crate num;
 
 mod solutions;
 
