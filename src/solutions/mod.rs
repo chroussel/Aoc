@@ -9,7 +9,10 @@ mod r2019_7;
 mod r2019_8;
 mod r2019_9;
 mod r2019_10;
+mod r2019_11;
 mod template;
+mod intcode;
+mod common;
 
 use failure::Error;
 use std::collections;
@@ -66,6 +69,7 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "8") => r2019_8::Solution::solve(input, part1),
         ("2019", "9") => r2019_9::Solution::solve(input, part1),
         ("2019", "10") => r2019_10::Solution::solve(input, part1),
+        ("2019", "11") => r2019_11::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }
