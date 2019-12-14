@@ -12,6 +12,7 @@ mod r2019_10;
 mod r2019_11;
 mod r2019_12;
 mod r2019_13;
+mod r2019_14;
 mod template;
 mod intcode;
 mod common;
@@ -72,6 +73,7 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "11") => r2019_11::Solution::solve(input, part1),
         ("2019", "12") => r2019_12::Solution::solve(input, part1),
         ("2019", "13") => r2019_13::Solution::solve(input, part1),
+        ("2019", "14") => r2019_14::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }
