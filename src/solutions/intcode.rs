@@ -1,4 +1,4 @@
-use std::ops::Range;
+use failure::Error;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum State {
@@ -27,8 +27,9 @@ impl From<i64> for ParamMode {
     }
 }
 
+#[derive(Clone)]
 pub struct Program {
-    code: Vec<i64>,
+    pub code: Vec<i64>,
     pc: usize,
     state: State,
     relative_base: i64,
@@ -37,6 +38,15 @@ pub struct Program {
 }
 
 impl Program {
+    pub fn parse(input: &str) -> Result<Program, Error> {
+        let code: Result<Vec<i64>, Error> = input.trim_end()
+            .split(',')
+            .filter(|s|!s.is_empty())
+            .map(|u|u.parse().map_err(From::from))
+            .collect();
+        code.map(|c|Program::new(c))
+    }
+
     pub fn new(code: Vec<i64>) -> Self {
         Program {
             code,

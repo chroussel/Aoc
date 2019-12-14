@@ -1,7 +1,8 @@
 use failure::Error;
 use crate::solutions::Solver;
 use crate::solutions::intcode::{Program, State};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
+use crate::solutions::common::Vector2;
 
 pub enum Solution {}
 
@@ -9,21 +10,6 @@ pub struct Panel {
     is_white: bool,
 }
 
-#[derive(Hash, Debug, PartialEq, Eq, Clone, Copy)]
-pub struct Vector2 {
-    x: i32,
-    y: i32
-}
-
-impl Vector2 {
-    fn new(x: i32, y: i32) -> Vector2 {
-        Vector2 {x,y}
-    }
-
-    fn add(&self, other: &Vector2) -> Vector2 {
-        Vector2::new(self.x + other.x, self.y + other.y)
-    }
-}
 
 pub struct Robot {
     program: Program,
@@ -162,25 +148,21 @@ impl Robot {
 }
 
 impl Solver for Solution {
-    type Input = Vec<i64>;
+    type Input = Program;
     type Output = i32;
 
     fn parse_input(input: &str) -> Result<Self::Input, Error> {
-        input.trim_end()
-            .split(',')
-            .filter(|s|!s.is_empty())
-            .map(|u|u.parse().map_err(From::from))
-            .collect()
+        Program::parse(input)
     }
 
     fn solve_part1(mut input: Self::Input) -> Result<Self::Output, Error> {
-        let mut res = Robot::new(Program::new(input), false);
+        let mut res = Robot::new(input, false);
         res.run();
         Ok(res.paint_count())
     }
 
     fn solve_part2(input: Self::Input) -> Result<Self::Output, Error> {
-        let mut res = Robot::new(Program::new(input), true);
+        let mut res = Robot::new(input, true);
         res.run();
         res.print();
         Ok(0)
@@ -189,32 +171,28 @@ impl Solver for Solution {
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::r2019_9::Solution;
+    use crate::solutions::r2019_11::Solution;
     use crate::solutions::Solver;
+    use crate::solutions::intcode::Program;
 
     #[test]
     fn e1() {
         let input = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
-        let mut code = Solution::parse_input(input).unwrap();
-        let res = Solution::run(&code, vec!());
+        let res = Program::parse(input).run_with_input(vec!());
         dbg!(res);
     }
 
     #[test]
     fn e2() {
         let input = "104,1125899906842624,99";
-        let mut code = Solution::parse_input(input).unwrap();
-        code.resize(200, 0);
-        let res = Solution::run(&code, vec!());
+        let res = Program::parse(input).run_with_input(vec!());
         dbg!(res);
     }
 
     #[test]
     fn e3() {
         let input = "1102,34915192,34915192,7,4,7,99,0";
-        let mut code = Solution::parse_input(input).unwrap();
-        code.resize(200, 0);
-        let res = Solution::run(&code, vec!());
+        let res = Program::parse(input).run_with_input(vec!());
         dbg!(res);
     }
 }

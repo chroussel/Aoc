@@ -2,10 +2,11 @@
 extern crate dirs;
 extern crate reqwest;
 extern crate tokio;
-#[macro_use] extern crate lazy_static;
-#[macro_use] extern crate criterion;
+extern crate criterion;
 extern crate itertools;
 extern crate num;
+extern crate nom;
+extern crate termion;
 
 mod solutions;
 

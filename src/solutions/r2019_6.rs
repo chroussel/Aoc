@@ -1,5 +1,4 @@
 use failure::Error;
-use itertools::*;
 use crate::solutions::Solver;
 use std::collections::HashMap;
 

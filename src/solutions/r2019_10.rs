@@ -74,6 +74,7 @@ impl Vector2 {
     fn new(x: i32, y: i32) -> Self {
         Vector2 {x,y}
     }
+
     fn slope(&self, other: Vector2) -> Vector2 {
         let x = - self.x + other.x ;
         let y = - self.y + other.y;

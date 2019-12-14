@@ -1,7 +1,5 @@
 use failure::Error;
 use crate::solutions::Solver;
-use failure::_core::cmp::Ordering;
-use std::ops::Range;
 use std::collections::HashSet;
 use std::iter::FromIterator;
 

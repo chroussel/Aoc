@@ -31,16 +31,16 @@ impl Solution {
         }
 
         // only increasing
-        let mut onlyI = true;
+        let mut only_i = true;
         for i in 0..5 {
-            onlyI &= digits[i] <= digits[i+1]
+            only_i &= digits[i] <= digits[i+1]
         }
-        has_double && onlyI
+        has_double && only_i
     }
 
     fn convert_to_digit(mut number: i32) -> Vec<i32> {
         let mut res = vec![];
-        while (number > 0) {
+        while number > 0 {
             let d = number % 10;
             res.insert(0, d);
             number /= 10

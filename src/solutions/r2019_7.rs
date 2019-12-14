@@ -228,7 +228,6 @@ impl Solution {
             }
             cp = (cp + 1)%ps.len();
         }
-        unreachable!()
     }
 
 

@@ -10,13 +10,13 @@ mod r2019_8;
 mod r2019_9;
 mod r2019_10;
 mod r2019_11;
+mod r2019_12;
+mod r2019_13;
 mod template;
 mod intcode;
 mod common;
 
 use failure::Error;
-use std::collections;
-use std::collections::HashMap;
 use std::env::VarError::NotPresent;
 
 pub trait Solver {
@@ -29,7 +29,7 @@ pub trait Solver {
 
     fn solve(input: &str, part1: bool) -> Result<String, Error>{
         let i = Self::parse_input(input)?;
-        let res = if (part1) {
+        let res = if part1 {
             Self::solve_part1(i)?
         } else {
             Self::solve_part2(i)?
@@ -70,6 +70,8 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "9") => r2019_9::Solution::solve(input, part1),
         ("2019", "10") => r2019_10::Solution::solve(input, part1),
         ("2019", "11") => r2019_11::Solution::solve(input, part1),
+        ("2019", "12") => r2019_12::Solution::solve(input, part1),
+        ("2019", "13") => r2019_13::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }
