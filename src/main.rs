@@ -7,6 +7,7 @@ extern crate itertools;
 extern crate num;
 extern crate nom;
 extern crate termion;
+extern crate rayon;
 
 mod solutions;
 

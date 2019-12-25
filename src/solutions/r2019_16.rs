@@ -146,7 +146,7 @@ mod tests {
 
     #[test]
     fn e3() {
-        let m = Solution::power_matrix(Solution::build_matrix(8), 2);
+        let m = Solution::power_matrix(Solution::build_matrix(8), 10);
         for i in 0..m.len() {
             for j in 0..m[0].len() {
                 print!("{:3}",m[i][j]);

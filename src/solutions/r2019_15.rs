@@ -72,14 +72,15 @@ impl Cell for Tile {
         Tile::Unknown
     }
 
-    fn print(&self) -> &str {
-        match self {
-            Tile::Unknown => {" "}
-            Tile::Empty => {"."},
-            Tile::Wall => {"W"},
-            Tile::Droid => {"D"},
-            Tile::Oxy => {"O"},
-        }
+    fn print<W: Write>(&self, stdout: &mut W) {
+            let s =match self {
+                Tile::Unknown => {" "}
+                Tile::Empty => {"."},
+                Tile::Wall => {"W"},
+                Tile::Droid => {"D"},
+                Tile::Oxy => {"O"},
+            };
+        stdout.write(s.as_bytes()).unwrap();
     }
 }
 
@@ -200,7 +201,7 @@ impl<W: Write, R: Iterator<Item=Result<Key, std::io::Error>>> Droid<W, R> {
         loop {
             match self.program.run() {
                 State::Input => {
-                    self.map.print_map(self.position, &Tile::Droid);
+                    self.map.print_map(self.position, &Tile::Droid, false);
                     //dbg!(&input_list, &self.position, &self.map.data);
                     loop {
                         if let Some(m) = input_list.pop_front() {

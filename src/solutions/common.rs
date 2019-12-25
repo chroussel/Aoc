@@ -47,11 +47,57 @@ impl Vector2 {
     pub fn scale(&self, scalar: i32) -> Vector2 {
         Vector2::new(self.x * scalar, self.y * scalar)
     }
+
+    pub fn neigh(&self) -> Vec<Vector2> {
+        let v = vec!(Vector2::new(1, 0), Vector2::new(-1, 0), Vector2::new(0, 1), Vector2::new(0, -1));
+        v.into_iter().map(|vs| vs.add(self)).collect()
+    }
 }
 
 pub trait Cell {
     fn default() -> Self;
-    fn print(&self) -> &str;
+    fn print<W: Write>(&self, stdout: &mut W);
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum Direction {
+    None,
+    North,
+    South,
+    East,
+    West
+}
+
+impl Direction {
+    pub fn to_input(&self) -> i64 {
+        match self {
+            Direction::None => 0,
+            Direction::East => 4,
+            Direction::North => 1,
+            Direction::South => 2,
+            Direction::West => 3
+        }
+    }
+
+    pub fn to_vector(&self) -> Vector2 {
+        match self {
+            Direction::None => {Vector2::zero()},
+            Direction::North => {Vector2::new(0,-1)},
+            Direction::South => {Vector2::new(0,1)},
+            Direction::East => {Vector2::new(1,0)},
+            Direction::West => {Vector2::new(-1,0)},
+        }
+    }
+
+    pub fn rotate(&self) -> Self {
+        match self {
+            Direction::None => {Direction::North},
+            Direction::North => {Direction::East},
+            Direction::South => {Direction::West},
+            Direction::East => {Direction::South},
+            Direction::West => {Direction::North},
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -78,7 +124,7 @@ impl<T: Cell, W: Write> Map2D<T, W> {
         self.stdout.flush().unwrap();
     }
 
-    pub fn print_map(&mut self, player: Vector2, symbol: &T) {
+    pub fn print_map(&mut self, player: Vector2, symbol: &T, clean: bool) {
         let (min_width, max_width) = match self.data.iter().minmax_by_key(|(k,v)|k.x) {
             MinMaxResult::NoElements => {return},
             MinMaxResult::OneElement(_) => {return},
@@ -93,7 +139,10 @@ impl<T: Cell, W: Write> Map2D<T, W> {
                 (a.0.y, b.0.y)
             },
         };
-        //write!(self.stdout, "{}", cursor::Goto(1, 1)).unwrap();
+
+        if clean {
+            write!(self.stdout, "{}", cursor::Goto(1, 1)).unwrap();
+        }
         for y in min_height..=max_height {
             for x in min_width..=max_width {
                 let default = T::default();
@@ -103,7 +152,7 @@ impl<T: Cell, W: Write> Map2D<T, W> {
                 } else {
                     self.data.get(&current).unwrap_or(&default)
                 };
-                write!(self.stdout, "{}", c.print()).unwrap();
+                c.print(&mut self.stdout);
             }
             self.stdout.write(b"\n\r").unwrap();
         }
@@ -111,13 +160,12 @@ impl<T: Cell, W: Write> Map2D<T, W> {
     }
 }
 
+
 impl<T: Cell, W: Write> Drop for Map2D<T, W> {
     fn drop(&mut self) {
         writeln!(self.stdout,
-                 "{}{}{}{}",
-                 termion::clear::All,
-                 termion::cursor::Goto(1, 1),
-                 termion::cursor::Hide,
+                 "{}{}",
+                 termion::cursor::Show,
                  termion::style::Reset).unwrap();
         self.stdout.flush().unwrap();
     }
