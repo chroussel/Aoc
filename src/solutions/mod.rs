@@ -17,6 +17,13 @@ mod r2019_15;
 mod r2019_16;
 mod r2019_17;
 mod r2019_18;
+mod r2019_19;
+mod r2019_20;
+mod r2019_21;
+mod r2019_22;
+mod r2019_23;
+mod r2019_24;
+mod r2019_25;
 mod template;
 mod intcode;
 mod common;
@@ -82,6 +89,13 @@ pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, Er
         ("2019", "16") => r2019_16::Solution::solve(input, part1),
         ("2019", "17") => r2019_17::Solution::solve(input, part1),
         ("2019", "18") => r2019_18::Solution::solve(input, part1),
+        ("2019", "19") => r2019_19::Solution::solve(input, part1),
+        ("2019", "20") => r2019_20::Solution::solve(input, part1),
+        ("2019", "21") => r2019_21::Solution::solve(input, part1),
+        ("2019", "22") => r2019_22::Solution::solve(input, part1),
+        ("2019", "23") => r2019_23::Solution::solve(input, part1),
+        ("2019", "24") => r2019_24::Solution::solve(input, part1),
+        ("2019", "25") => r2019_25::Solution::solve(input, part1),
         _ => Err(Error::from(NotPresent))
     }
 }
