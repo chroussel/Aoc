@@ -15,12 +15,14 @@ use std::path::PathBuf;
 fn get_session() -> Result<String, Error> {
     let home = dirs::home_dir().unwrap();
     let session_file = home.join(".aoc");
-    std::fs::read_to_string(session_file).map_err(From::from)
+    std::fs::read_to_string(session_file)
+        .map(|s| s.trim().to_owned())
+        .map_err(From::from)
 }
 
 async fn download_input(year: &str, day: &str) -> Result<(), Error> {
     let session = get_session()?;
-    let client = reqwest::Client::new();
+    let client = reqwest::Client::builder().build()?;
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
     let res =
         client
