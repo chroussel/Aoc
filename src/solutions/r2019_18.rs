@@ -5,8 +5,6 @@ use itertools::Itertools;
 use nom::lib::std::collections::{HashMap, VecDeque, HashSet};
 use std::fmt::Display;
 use failure::_core::fmt::Formatter;
-use std::iter::FromIterator;
-use rayon::prelude::*;
 use std::sync::{Arc, RwLock};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
