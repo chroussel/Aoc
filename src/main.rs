@@ -9,10 +9,9 @@ extern crate termion;
 mod solutions;
 
 use clap::App;
-use failure::Error;
-use std::path::PathBuf;
+use std::{path::PathBuf, error::Error};
 
-fn get_session() -> Result<String, Error> {
+fn get_session() -> Result<String, Box<dyn Error>> {
     let home = dirs::home_dir().unwrap();
     let session_file = home.join(".aoc");
     std::fs::read_to_string(session_file)
@@ -20,7 +19,7 @@ fn get_session() -> Result<String, Error> {
         .map_err(From::from)
 }
 
-async fn download_input(year: &str, day: &str) -> Result<(), Error> {
+async fn download_input(year: &str, day: &str) -> Result<(), Box<dyn Error>> {
     let session = get_session()?;
     let client = reqwest::Client::builder().build()?;
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
@@ -39,7 +38,7 @@ fn get_input_location(year: &str, day: &str) -> PathBuf {
     PathBuf::from(format!("{}/{}/input", year, day))
 }
 
-async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Error> {
+async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Box<dyn Error>> {
     let input_path =get_input_location(year, day);
     if !input_path.exists() {
         download_input(year, day).await?;
@@ -51,7 +50,7 @@ async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Error> {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn Error>> {
     let yaml = load_yaml!("cli.yml");
     let matches = App::from(yaml).get_matches();
     if let Some(args) = matches.subcommand_matches("input") {

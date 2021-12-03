@@ -9,7 +9,6 @@ edition = "2021"
 [dependencies]
 clap = {version = "2", features = ["yaml"]}
 dirs = "4"
-failure = "0.1"
 reqwest = "0.11"
 tokio = {version = "1", features = ["full"]}
 itertools = "0.10"
@@ -17,3 +16,4 @@ num = "0.4"
 nom = "7.1"
 termion = "*"
 color-eyre = "0.5"
+thiserror = "1.0"

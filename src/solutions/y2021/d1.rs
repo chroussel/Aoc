@@ -1,6 +1,4 @@
-use failure::Error;
-use crate::solutions::Solver;
-
+use crate::solutions::{Solver, AocError};
 pub enum Solution {}
 
 impl Solution {
@@ -11,13 +9,13 @@ impl Solver for Solution {
     type Input = Vec<i32>;
     type Output = i32;
 
-    fn parse_input(input: &str) -> Result<Self::Input, Error> {
+    fn parse_input(input: &str) -> Result<Self::Input, AocError> {
         input.lines()
-            .map(|s| s.parse::<i32>().map_err(|e| Error::from(e)))
+            .map(|s| s.parse::<i32>().map_err(|e| AocError::from(e)))
             .collect()
     }
 
-    fn solve_part1(input: Self::Input) -> Result<Self::Output, Error> {
+    fn solve_part1(input: Self::Input) -> Result<Self::Output, AocError> {
        let mut first = input[0];
 
        let mut count = 0;
@@ -30,7 +28,7 @@ impl Solver for Solution {
        Ok(count)
     }
 
-    fn solve_part2(input: Self::Input) -> Result<Self::Output, Error> {
+    fn solve_part2(input: Self::Input) -> Result<Self::Output, AocError> {
         let mut count = 0;
         let mut s = None;
         for w in input.windows(3) {

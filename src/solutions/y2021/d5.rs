@@ -1,10 +1,4 @@
-use std::error::Error;
-
-use crate::solutions::Solver;
-
-use super::AocError;
-
-pub enum Solution {}
+use crate::solutions::{Solver, AocError};pub enum Solution {}
 
 impl Solution {
 
