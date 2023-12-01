@@ -1,18 +1,18 @@
 use thiserror::Error;
 
-mod y2023;
-mod template;
 mod common;
+mod template;
+mod y2023;
 
 #[derive(Debug, Error)]
 pub enum AocError {
     #[error("parse eror")]
-    ParseIntError{
+    ParseIntError {
         #[from]
-        source: std::num::ParseIntError
+        source: std::num::ParseIntError,
     },
     #[error("unknown error {0}")]
-    Unknown(String)
+    Unknown(String),
 }
 
 pub trait Solver {
@@ -23,7 +23,7 @@ pub trait Solver {
     fn solve_part1(_: Self::Input) -> Result<Self::Output, AocError>;
     fn solve_part2(_: Self::Input) -> Result<Self::Output, AocError>;
 
-    fn solve(input: &str, part1: bool) -> Result<String, AocError>{
+    fn solve(input: &str, part1: bool) -> Result<String, AocError> {
         let i = Self::parse_input(input)?;
         let res = if part1 {
             Self::solve_part1(i)?
@@ -39,46 +39,47 @@ pub trait Solver {
 struct InputDay {
     year: String,
     day: String,
-    part: String
+    part: String,
 }
 
 impl InputDay {
     fn new(year: &str, day: &str, part: &str) -> Self {
         InputDay {
             year: year.to_string(),
-            day:day.to_string(),
-            part: part.to_string()
+            day: day.to_string(),
+            part: part.to_string(),
         }
     }
 }
 
 pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, AocError> {
     match (year, day) {
-         ("2023","1") => y2023::d1::Solution::solve(input, part1),
-         ("2023","2") => y2023::d2::Solution::solve(input, part1),
-         ("2023, "3") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "4") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "5") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "6") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "7") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "8") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "9") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "10") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "11") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "12") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "13") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "14") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "15") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "16") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "17") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "18") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "19") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "20") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "21") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "22") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "23") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "24") => y2023::d3::Solution::solve(input, part1),
-        ("2023, "25") => y2023::d3::Solution::solve(input, part1),
-         _ => unimplemented!()
+        ("2023", "1") => y2023::d1::Solution::solve(input, part1),
+        ("2023", "2") => y2023::d2::Solution::solve(input, part1),
+        ("2023", "3") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "4") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "5") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "6") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "7") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "8") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "9") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "10") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "11") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "12") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "13") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "14") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "15") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "16") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "17") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "18") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "19") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "20") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "21") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "22") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "23") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "24") => y2023::d3::Solution::solve(input, part1),
+        ("2023", "25") => y2023::d3::Solution::solve(input, part1),
+        _ => unimplemented!(),
     }
 }
+

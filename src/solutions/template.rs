@@ -1,14 +1,9 @@
-use std::error::Error;
-
+use crate::solutions::AocError;
 use crate::solutions::Solver;
-
-use super::AocError;
 
 pub enum Solution {}
 
-impl Solution {
-
-}
+impl Solution {}
 
 impl Solver for Solution {
     type Input = Vec<i32>;
@@ -28,6 +23,5 @@ impl Solver for Solution {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests {}
 
-}

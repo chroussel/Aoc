@@ -1,15 +1,7 @@
-#[macro_use] extern crate clap;
-extern crate dirs;
-extern crate reqwest;
-extern crate tokio;
-extern crate itertools;
-extern crate num;
-extern crate nom;
-extern crate termion;
-mod solutions;
+use clap::{Parser, Subcommand};
+use std::{error::Error, path::PathBuf};
 
-use clap::App;
-use std::{path::PathBuf, error::Error};
+mod solutions;
 
 fn get_session() -> Result<String, Box<dyn Error>> {
     let home = dirs::home_dir().unwrap();
@@ -23,12 +15,13 @@ async fn download_input(year: &str, day: &str) -> Result<(), Box<dyn Error>> {
     let session = get_session()?;
     let client = reqwest::Client::builder().build()?;
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-    let res =
-        client
-            .get(&url)
-            .header("cookie", format!("session={}", session))
-            .send()
-        .await?.text().await?;
+    let res = client
+        .get(&url)
+        .header("cookie", format!("session={}", session))
+        .send()
+        .await?
+        .text()
+        .await?;
     std::fs::create_dir_all(format!("{}/{}", year, day))?;
     std::fs::write(get_input_location(year, day), res)?;
     Ok(())
@@ -39,7 +32,7 @@ fn get_input_location(year: &str, day: &str) -> PathBuf {
 }
 
 async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Box<dyn Error>> {
-    let input_path =get_input_location(year, day);
+    let input_path = get_input_location(year, day);
     if !input_path.exists() {
         download_input(year, day).await?;
     }
@@ -49,22 +42,34 @@ async fn run_input(year: &str, day: &str, part: &str) -> Result<(), Box<dyn Erro
     Ok(())
 }
 
+#[derive(Parser)]
+#[command()]
+struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    Input {
+        year: String,
+        day: String,
+    },
+    Run {
+        year: String,
+        day: String,
+        part: Option<String>,
+    },
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let yaml = load_yaml!("cli.yml");
-    let matches = App::from(yaml).get_matches();
-    if let Some(args) = matches.subcommand_matches("input") {
-        let year = args.value_of("YEAR").expect("required");
-        let day = args.value_of("DAY").expect("required");
-
-        download_input(year, day).await?;
+    let cli = Cli::parse();
+    match cli.command {
+        Command::Input { year, day } => download_input(&year, &day).await?,
+        Command::Run { year, day, part } => {
+            run_input(&year, &day, &part.unwrap_or("1".into())).await?
+        }
     }
-    if let Some(args) = matches.subcommand_matches("run") {
-        let year = args.value_of("YEAR").expect("required");
-        let day = args.value_of("DAY").expect("required");
-        let part = args.value_of("PART").unwrap_or("1");
-        run_input(year, day, part).await?;
-    }
-
     Ok(())
 }
