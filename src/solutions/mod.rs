@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-mod y2021;
+mod y2023;
 mod template;
 mod common;
 
@@ -54,8 +54,31 @@ impl InputDay {
 
 pub fn run(year: &str, day: &str, part1: bool, input: &str) -> Result<String, AocError> {
     match (year, day) {
-         ("2021","1") => y2021::d1::Solution::solve(input, part1),
-         ("2021","2") => y2021::d2::Solution::solve(input, part1),
+         ("2023","1") => y2023::d1::Solution::solve(input, part1),
+         ("2023","2") => y2023::d2::Solution::solve(input, part1),
+         ("2023, "3") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "4") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "5") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "6") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "7") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "8") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "9") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "10") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "11") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "12") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "13") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "14") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "15") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "16") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "17") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "18") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "19") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "20") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "21") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "22") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "23") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "24") => y2023::d3::Solution::solve(input, part1),
+        ("2023, "25") => y2023::d3::Solution::solve(input, part1),
          _ => unimplemented!()
     }
 }
