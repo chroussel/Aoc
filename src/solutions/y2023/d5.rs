@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use crate::solutions::Solver;
 
 use crate::solutions::AocError;
