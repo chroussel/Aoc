@@ -1,4 +1,4 @@
-use std::error::Error;
+
 
 use itertools::Itertools;
 
@@ -62,9 +62,9 @@ impl Solver for Solution {
     fn solve_part1(input: Self::Input) -> Result<Self::Output, AocError> {
         let mut s = 0;
         for g in input {
-            let mut red = 12;
-            let mut green = 13;
-            let mut blue = 14;
+            let red = 12;
+            let green = 13;
+            let blue = 14;
             let mut pos = true;
             for m in g.moves {
                 if m.red > red || m.blue > blue || m.green > green {

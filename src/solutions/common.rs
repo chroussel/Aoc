@@ -125,14 +125,14 @@ impl<T: Cell, W: Write> Map2D<T, W> {
     }
 
     pub fn print_map(&mut self, player: Vector2, symbol: &T, clean: bool) {
-        let (min_width, max_width) = match self.data.iter().minmax_by_key(|(k,v)|k.x) {
+        let (min_width, max_width) = match self.data.iter().minmax_by_key(|(k,_v)|k.x) {
             MinMaxResult::NoElements => {return},
             MinMaxResult::OneElement(_) => {return},
             MinMaxResult::MinMax(a, b) => {
                 (a.0.x, b.0.x)
             },
         };
-        let (min_height, max_height) = match self.data.iter().minmax_by_key(|(k,v)|k.y) {
+        let (min_height, max_height) = match self.data.iter().minmax_by_key(|(k,_v)|k.y) {
             MinMaxResult::NoElements => {return},
             MinMaxResult::OneElement(_) => {return},
             MinMaxResult::MinMax(a, b) => {
