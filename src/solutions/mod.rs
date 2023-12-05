@@ -1,3 +1,4 @@
+#![feature(array_windows)]
 use thiserror::Error;
 
 mod common;
