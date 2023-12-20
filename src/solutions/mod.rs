@@ -1,5 +1,6 @@
 #![feature(array_windows)]
 use thiserror::Error;
+use tokio::time::Instant;
 
 mod common;
 mod template;
@@ -25,13 +26,22 @@ pub trait Solver {
     fn solve_part2(_: Self::Input) -> Result<Self::Output, AocError>;
 
     fn solve(input: &str, part1: bool) -> Result<String, AocError> {
+        let start = Instant::now();
         let i = Self::parse_input(input)?;
+        let parsing_end = Instant::now();
         let res = if part1 {
             Self::solve_part1(i)?
         } else {
             Self::solve_part2(i)?
         };
+        let end = Instant::now();
 
+        println!("Run time: {} ms", (end - start).as_secs_f32() * 1000.0);
+        println!(
+            "Parsing: {} ms",
+            (parsing_end - start).as_secs_f32() * 1000.0
+        );
+        println!("Compute: {} ms", (end - parsing_end).as_secs_f32() * 1000.0);
         Ok(res.to_string())
     }
 }
