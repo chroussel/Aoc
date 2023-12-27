@@ -9,11 +9,16 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.4.10", features = ["derive"] }
 dirs = "5.0.1"
+disjoint = "0.6.0"
 itertools = "0.12.0"
+nalgebra = "0.32.3"
+ndarray = { version = "0.15.6", features = ["blas"] }
 nom = "7.1.3"
 num = "0.4.1"
+rand = "0.8.5"
 regex = "1.10.2"
 reqwest = "0.11.22"
 termion = "2.0.3"
 thiserror = "1"
 tokio = { version = "1.34.0", features = ["macros", "rt-multi-thread"] }
+z3 = { version = "0.12.1", features = ["static-link-z3"] }
